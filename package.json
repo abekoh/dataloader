@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node --loader ts-node/esm index.ts"
+    "start": "node --loader ts-node/esm src/index.ts"
   },
   "type": "module",
   "dependencies": {
