@@ -53,7 +53,9 @@ function initDatabase() {
 class TaskRepository {
   findOne(id: string): Promise<Task> {
     return new Promise((resolve, reject) => {
-      db.get(`SELECT * FROM tasks WHERE id = ?`, [id], (err, row) => {
+      const sql = `SELECT * FROM tasks WHERE id = ?`;
+      console.debug(`get: ${sql}, ${id}`);
+      db.get(sql, [id], (err, row) => {
         if (err) {
           reject(err);
         } else {
@@ -65,7 +67,9 @@ class TaskRepository {
 
   findMany(ids: string[]): Promise<Task[]> {
     return new Promise((resolve, reject) => {
-      db.all(`SELECT * FROM tasks WHERE id in ?`, [ids], (err, rows) => {
+      const sql = `SELECT * FROM tasks WHERE id in ?`;
+      console.debug(`get: ${sql}, ${ids}`);
+      db.all(sql, [ids], (err, rows) => {
         if (err) {
           reject(err);
         } else {
