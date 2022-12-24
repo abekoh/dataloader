@@ -68,9 +68,9 @@ class TaskRepository {
 
   findMany(ids: string[]): Promise<Task[]> {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM tasks WHERE id in ?`;
-      console.debug(`get: ${sql}, ${ids}`);
-      db.all(sql, [ids], (err, rows) => {
+      const sql = `SELECT * FROM tasks WHERE id in (${ids.map(id => `'${id}'`).join(",")})`;
+      console.debug(`get: ${sql}`);
+      db.all(sql, [], (err, rows) => {
         if (err) {
           reject(err);
         } else {
@@ -100,9 +100,12 @@ function main() {
       reject(e);
     })
   }))
+  console.log('start');
   const promise1 = taskLoader.load(task1Id);
   const promise2 = taskLoader.load(task2Id);
   Promise.all([promise1, promise2]).then(([task1, task2]) => {
     console.log(task1, task2);
   })
 }
+
+main()
