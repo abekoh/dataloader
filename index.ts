@@ -29,24 +29,24 @@ function initDatabase() {
     return;
   }
   db.run(
-      "CREATE TABLE tasks(id TEXT PRIMARY KEY, content TEXT NOT NULL)",
-      (err) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        seeds.forEach((task) => {
-          db.run(
-              `INSERT INTO tasks(id, content) VALUES(?, ?)`,
-              [task.id, task.content],
-              (err) => {
-                if (err) {
-                  console.error(err);
-                }
-              }
-          );
-        });
+    "CREATE TABLE tasks(id TEXT PRIMARY KEY, content TEXT NOT NULL)",
+    (err) => {
+      if (err) {
+        console.error(err);
+        return;
       }
+      seeds.forEach((task) => {
+        db.run(
+          `INSERT INTO tasks(id, content) VALUES(?, ?)`,
+          [task.id, task.content],
+          (err) => {
+            if (err) {
+              console.error(err);
+            }
+          }
+        );
+      });
+    }
   );
 }
 
@@ -86,11 +86,8 @@ class TaskRepository {
 async function main() {
   initDatabase();
   const repo = new TaskRepository();
-  const task = repo.findOne(task1Id);
-  task.then((t) => {
-    console.log(t);
-  });
+  const task = await repo.findOne(task1Id);
+  console.log(task);
 }
 
 await main();
-
