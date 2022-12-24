@@ -1,5 +1,6 @@
 import sqlite from "sqlite3";
 import * as fs from "fs";
+import {DataLoader} from "./dataloader";
 
 type Task = {
   id: string;
@@ -29,24 +30,24 @@ function initDatabase() {
     return;
   }
   db.run(
-    "CREATE TABLE tasks(id TEXT PRIMARY KEY, content TEXT NOT NULL)",
-    (err) => {
-      if (err) {
-        console.error(err);
-        return;
+      "CREATE TABLE tasks(id TEXT PRIMARY KEY, content TEXT NOT NULL)",
+      (err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        seeds.forEach((task) => {
+          db.run(
+              `INSERT INTO tasks(id, content) VALUES(?, ?)`,
+              [task.id, task.content],
+              (err) => {
+                if (err) {
+                  console.error(err);
+                }
+              }
+          );
+        });
       }
-      seeds.forEach((task) => {
-        db.run(
-          `INSERT INTO tasks(id, content) VALUES(?, ?)`,
-          [task.id, task.content],
-          (err) => {
-            if (err) {
-              console.error(err);
-            }
-          }
-        );
-      });
-    }
   );
 }
 
@@ -88,12 +89,21 @@ class TaskRepository {
 }
 
 
-
 async function main() {
   initDatabase();
   const repo = new TaskRepository();
-  const task = await repo.findOne(task1Id);
-  console.log(task);
+
+  const taskLoader = new DataLoader<string, Task>(ids => new Promise((resolve, reject) => {
+    repo.findMany(ids).then(tasks => {
+      resolve(tasks);
+    }).catch(e => {
+      reject(e);
+    })
+  }))
+  const promise1 = taskLoader.load(task1Id);
+  const promise2 = taskLoader.load(task2Id);
+  const [task1, task2] = await Promise.all([promise1, promise2]);
+  console.log(task1, task2);
 }
 
 await main();
