@@ -19,7 +19,7 @@ const enqueuePostPromiseJob = function (fn: () => void) {
   })
 }
 
-class DataLoader<K, V> {
+export class DataLoader<K, V> {
   private batch: Batch<K, V> | null = null;
   private batchScheduleFn = enqueuePostPromiseJob;
 
