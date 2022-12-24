@@ -89,7 +89,7 @@ class TaskRepository {
 }
 
 
-async function main() {
+function main() {
   initDatabase();
   const repo = new TaskRepository();
 
@@ -102,8 +102,7 @@ async function main() {
   }))
   const promise1 = taskLoader.load(task1Id);
   const promise2 = taskLoader.load(task2Id);
-  const [task1, task2] = await Promise.all([promise1, promise2]);
-  console.log(task1, task2);
+  Promise.all([promise1, promise2]).then(([task1, task2]) => {
+    console.log(task1, task2);
+  })
 }
-
-await main();
